@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# vim: set tabstop=4 expandtab:
+# author: Sylvain Rabot <sylvain@abstraction.fr>
+# date: 24/03/2011
+# copyright: All rights reserved
+
+# -----------------------------------------------------------------------------
+
+PREFIX=/usr/local
+LIB_DIR=$PREFIX/lib/pgtop
+LIB_ACTIVITY=$LIB_DIR/pg_activity.sql
+LIB_LOCKS=$LIB_DIR/pg_locks.sql
+LIB_TABLES=$LIB_DIR/pg_tables.sql
+LIB_RELSIZES=$LIB_DIR/pg_relsizes.sql
+LIB_RELBLOATS=$LIB_DIR/pg_relbloats.sql
+LIB_FUNCTIONS=$LIB_DIR/pg_functions.sql
+
+WATCH_SLEEP="2"
+DATABASE=""
+SQL_FILE="$LIB_ACTIVITY"
+PAGER="less"
+
+# -- usage ---------------------------------------------------------------------
+
+usage()
+{
+    echo >&2 ""
+    echo >&2 "  pgtop, show some postgresql figures"
+    echo >&2 ""
+    echo >&2 "   -d,--database  database name"
+    echo >&2 "   --tables       show database tables"
+    echo >&2 "   --locks        show database locks"
+    echo >&2 "   --sizes        show database relations size"
+    echo >&2 "   --bloats       show database relations bloat"
+    echo >&2 "   --functions    show database functions"
+    echo >&2 "   --sleep        delay between refresh (Default: $WATCH_SLEEP)"
+    echo >&2 ""
+}
+
+# ------------------------------------------------------------------------------
+
+ARGV=`getopt --options h,d: --long help,loop,sleep:,locks,tables,sizes,bloats,functions,database: -n "$0" -- "$0" "$@"`
+
+if [ $? != 0 ] ; then
+    die "Terminating ...";
+fi
+
+eval set -- "$ARGV"
+
+# ------------------------------------------------------------------------------
+
+
+while true ;
+do
+    case "$1" in
+        --sleep)        WATCH_SLEEP="$2";           hift 2;;
+        -d|--database)  DATABASE="$2";              shift 2;;
+        --tables)       SQL_FILE="$LIB_TABLES";     shift 1;;
+        --locks)        SQL_FILE="$LIB_LOCKS";      shift 1;;
+        --sizes)        SQL_FILE="$LIB_RELSIZES";   shift 1;;
+        --bloats)       SQL_FILE="$LIB_RELBLOATS";  shift 1;;
+        --functions)    SQL_FILE="$LIB_FUNCTIONS";  shift 1;;
+        --)             shift;                      break;;
+        -h|--help)      usage;                      exit 0;;
+        *)              usage;                      exit 1;;
+    esac
+done
+
+# ------------------------------------------------------------------------------
+
+if [ "$SQL_FILE" == "$LIB_ACTIVITY" ]; then
+    sudo -u postgres -- watch -n $WATCH_SLEEP "psql -f $SQL_FILE"
+else
+    sudo -u postgres -- psql -f $SQL_FILE -d $DATABASE | $PAGER
+fi
