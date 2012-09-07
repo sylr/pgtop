@@ -7,8 +7,9 @@ SELECT
     datname,
     procpid,
     usename,
+    client_addr,
     waiting AS wait,
-    now() - query_start AS duration,
+    date_trunc('second', now() - query_start) AS duration,
     current_query
 FROM
     pg_stat_activity
