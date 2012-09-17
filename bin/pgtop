@@ -46,7 +46,9 @@ EOF
 
 # ------------------------------------------------------------------------------
 
-ARGV=`getopt --options h,d: --long help,loop,sleep:,locks,tables,sizes,bloats,functions,database: -n "$0" -- "$0" "$@"`
+SHORT_OPTIONS="h,d:"
+LONG_OPTIONS="help,loop,sleep:,locks,tables,sizes,bloats,functions,database:"
+ARGV=$(getopt --options ${SHORT_OPTIONS} --long ${LONG_OPTIONS} -n "$0" -- "$0" "$@")
 
 if [ $? != 0 ] ; then
     die "Terminating ...";
