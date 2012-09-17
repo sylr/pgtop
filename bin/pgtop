@@ -56,6 +56,17 @@ eval set -- "$ARGV"
 
 # ------------------------------------------------------------------------------
 
+if [ -z "$(which psql)" ]; then
+    echo >&2 \"psql\" not found.
+    exit 1
+fi
+
+if [ -z "$(which watch)" ]; then
+    echo >&2 \"watch\" not found.
+    exit 1
+fi
+
+# ------------------------------------------------------------------------------
 
 while true ;
 do
