@@ -24,17 +24,24 @@ PAGER="less"
 
 usage()
 {
-    echo >&2 ""
-    echo >&2 "  pgtop, show some postgresql figures"
-    echo >&2 ""
-    echo >&2 "   -d,--database  database name"
-    echo >&2 "   --tables       show database tables"
-    echo >&2 "   --locks        show database locks"
-    echo >&2 "   --sizes        show database relations size"
-    echo >&2 "   --bloats       show database relations bloat"
-    echo >&2 "   --functions    show database functions"
-    echo >&2 "   --sleep        delay between refresh (Default: $WATCH_SLEEP)"
-    echo >&2 ""
+    cat << EOF >&2
+         ___      __________  ___
+        / _ \___ /_  __/ __ \\/ _ \\
+       / ___/ _ \`// / / /_/ / ___/
+      /_/   \_, //_/  \____/_/
+           /___/
+
+  pgtop, show some postgresql figures
+
+      -d,--database     database name
+      --tables          show database tables
+      --locks           show database locks
+      --sizes           show database relations size
+      --bloats          show database relations bloat
+      --functions       show database functions
+      --sleep           delay between refresh (Default: $WATCH_SLEEP)
+
+EOF
 }
 
 # ------------------------------------------------------------------------------
